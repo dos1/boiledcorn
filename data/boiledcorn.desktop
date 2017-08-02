@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Boiled Corn
+Exec=boiledcorn
+Comment=BOOOOILED COOOORN!
+Icon=boildcorn
+Terminal=false
+Categories=Game;ArcadeGame;
