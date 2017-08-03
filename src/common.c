@@ -23,19 +23,17 @@
 
 bool GlobalEventHandler(struct Game *game, ALLEGRO_EVENT *ev) {
 	if ((ev->type==ALLEGRO_EVENT_KEY_CHAR) && (ev->keyboard.keycode == ALLEGRO_KEY_F)) {
-		if (ev->keyboard.modifiers & ALLEGRO_KEYMOD_CTRL) {
-			game->config.fullscreen = !game->config.fullscreen;
-			if (game->config.fullscreen) {
-				SetConfigOption(game, "SuperDerpy", "fullscreen", "1");
-				al_hide_mouse_cursor(game->display);
-			} else {
-				SetConfigOption(game, "SuperDerpy", "fullscreen", "0");
-				al_show_mouse_cursor(game->display);
-			}
-			al_set_display_flag(game->display, ALLEGRO_FULLSCREEN_WINDOW, game->config.fullscreen);
-			SetupViewport(game, game->viewport_config);
-			PrintConsole(game, "Fullscreen toggled");
+		game->config.fullscreen = !game->config.fullscreen;
+		if (game->config.fullscreen) {
+			SetConfigOption(game, "SuperDerpy", "fullscreen", "1");
+			al_hide_mouse_cursor(game->display);
+		} else {
+			SetConfigOption(game, "SuperDerpy", "fullscreen", "0");
+			al_show_mouse_cursor(game->display);
 		}
+		al_set_display_flag(game->display, ALLEGRO_FULLSCREEN_WINDOW, game->config.fullscreen);
+		SetupViewport(game, game->viewport_config);
+		PrintConsole(game, "Fullscreen toggled");
 	}
 
 	return false;
