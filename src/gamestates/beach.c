@@ -83,7 +83,7 @@ void Gamestate_Logic(struct Game *game, struct GamestateResources* data) {
 			bool fine = false;
 			for (int i=0; i<6; i++) {
 				int x = data->throwx;
-				int y = data->throwy;
+				int y = data->throwy + 2;
 				int x1 = data->people[i].x, y1 = data->people[i].y;
 				int x2 = x1 + al_get_bitmap_width(data->people[i].towel), y2 = y1 + al_get_bitmap_height(data->people[i].towel);
 
@@ -222,29 +222,34 @@ void Gamestate_Draw(struct Game *game, struct GamestateResources* data) {
 		}
 
 	} else {
+#ifndef ALLEGRO_ANDROID
+		char *tocorn = "Press SPACE to corn";
+#else
+		char *tocorn = "Touch to corn";
+#endif
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
 
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
 
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
 
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2-1, 90/2 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2+1, 90/2 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
 
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
 		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(0,0,0), 160/2, 90/2 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
 
 		al_draw_text(data->font, al_map_rgb(255,255,255), 160/2, 90/2 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(255,255,255), 160/2, 90/2 + 6, ALLEGRO_ALIGN_CENTER, "Press SPACE to corn");
+		al_draw_text(data->font, al_map_rgb(255,255,255), 160/2, 90/2 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
 	}
 }
 
@@ -255,7 +260,8 @@ void Gamestate_ProcessEvent(struct Game *game, struct GamestateResources* data, 
 		UnloadCurrentGamestate(game); // mark this gamestate to be stopped and unloaded
 		// When there are no active gamestates, the engine will quit.
 	}
-	if ((ev->type==ALLEGRO_EVENT_KEY_DOWN) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) {
+	if (((ev->type==ALLEGRO_EVENT_KEY_DOWN) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) ||
+	   (ev->type==ALLEGRO_EVENT_TOUCH_BEGIN)) {
 		if (!data->started) {
 			al_rewind_audio_stream(data->music);
 			al_set_audio_stream_playing(data->music, true);
@@ -290,7 +296,7 @@ void Gamestate_ProcessEvent(struct Game *game, struct GamestateResources* data, 
 		}
 	}
 
-	if ((ev->type==ALLEGRO_EVENT_KEY_UP) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) {
+	if (((ev->type==ALLEGRO_EVENT_KEY_UP) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) || (ev->type == ALLEGRO_EVENT_TOUCH_END)) {
 		if (data->preparing) {
 			data->preparing = false;
 			data->throwing = true;
