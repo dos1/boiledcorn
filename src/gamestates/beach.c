@@ -336,7 +336,7 @@ void* Gamestate_Load(struct Game *game, void (*progress)(struct Game*)) {
 	al_clear_to_color(al_map_rgba(0,0,0,0));
 	al_set_target_backbuffer(game->display);
 
-	data->tmp = al_create_bitmap(160, 90);
+	data->tmp = CreateNotPreservedBitmap(160, 90);
 
 	data->guy = CreateCharacter(game, "guy");
 	RegisterSpritesheet(game, data->guy, "stand");
