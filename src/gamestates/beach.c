@@ -467,4 +467,6 @@ void Gamestate_Resume(struct Game *game, struct GamestateResources* data) {
 
 // Ignore this for now.
 // TODO: Check, comment, refine and/or remove:
-void Gamestate_Reload(struct Game *game, struct GamestateResources* data) {}
+void Gamestate_Reload(struct Game *game, struct GamestateResources* data) {
+	data->tmp = CreateNotPreservedBitmap(160, 90);
+}
