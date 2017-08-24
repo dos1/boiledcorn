@@ -48,12 +48,7 @@ int main(int argc, char** argv) {
 	game->data = CreateGameData(game);
 
 	game->eventHandler = &GlobalEventHandler;
+	game->destroyHandler = &DestroyGameData;
 
-	libsuperderpy_run(game);
-
-	DestroyGameData(game, game->data);
-
-	libsuperderpy_destroy(game);
-
-	return 0;
+	return libsuperderpy_run(game);
 }
