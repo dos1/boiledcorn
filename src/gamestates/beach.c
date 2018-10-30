@@ -21,6 +21,7 @@
 #include "../common.h"
 #include <libsuperderpy.h>
 #include <math.h>
+#include <stdio.h>
 
 struct GamestateResources {
 	// This struct is for every resource allocated and used by your gamestate.
@@ -87,7 +88,7 @@ void Gamestate_Tick(struct Game* game, struct GamestateResources* data) {
 
 			bool fine = false;
 			for (int i = 0; i < 6; i++) {
-				int x = data->throwx;
+				int x = (int)data->throwx;
 				int y = data->throwy + 2;
 				int x1 = data->people[i].x, y1 = data->people[i].y;
 				int x2 = x1 + al_get_bitmap_width(data->people[i].towel), y2 = y1 + al_get_bitmap_height(data->people[i].towel);
@@ -153,11 +154,11 @@ void Gamestate_Tick(struct Game* game, struct GamestateResources* data) {
 		data->seay = 0;
 		al_play_sample_instance(data->boiledcorn[rand() % 3]);
 	}
-	data->seax = fabs(sin(data->frames / 64.0)) * 16;
+	data->seax = (int)fabs(sin(data->frames / 64.0)) * 16;
 	if (data->seax == 15) {
 		data->maxsea = rand() % 7;
 	}
-	data->seax = fmax(data->seax, data->maxsea);
+	data->seax = (int)fmax(data->seax, data->maxsea);
 	if (data->seax == data->maxsea) {
 		data->sandx = data->maxsea;
 		data->sandleft = 255;
@@ -166,6 +167,20 @@ void Gamestate_Tick(struct Game* game, struct GamestateResources* data) {
 	if (data->sandleft < 0) {
 		data->sandleft = 0;
 	}
+}
+
+static void DrawTextWithOutline(ALLEGRO_FONT* font, ALLEGRO_COLOR color, ALLEGRO_COLOR outline_color, float x, float y, int flags, const char* text) {
+	al_hold_bitmap_drawing(true);
+	al_draw_text(font, outline_color, x + 1, y + 1, flags, text);
+	al_draw_text(font, outline_color, x - 1, y - 1, flags, text);
+	al_draw_text(font, outline_color, x + 1, y - 1, flags, text);
+	al_draw_text(font, outline_color, x - 1, y + 1, flags, text);
+	al_draw_text(font, outline_color, x - 1, y, flags, text);
+	al_draw_text(font, outline_color, x + 1, y, flags, text);
+	al_draw_text(font, outline_color, x, y - 1, flags, text);
+	al_draw_text(font, outline_color, x, y + 1, flags, text);
+	al_draw_text(font, color, x, y, flags, text);
+	al_hold_bitmap_drawing(false);
 }
 
 void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
@@ -198,16 +213,17 @@ void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
 	}
 
 	if (data->started_once) {
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 + 1, 2 + 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 - 1, 2 - 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 + 1, 2 - 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 - 1, 2 + 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 - 1, 2, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1 + 1, 2, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1, 2 - 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(99, 99, 99), 160 - 1, 2 + 1, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
-		al_draw_textf(data->font, al_map_rgb(255, 255, 255), 160 - 1, 2, ALLEGRO_ALIGN_RIGHT, "%d", data->score);
+		char score[255];
+		snprintf(score, 255, "%d", data->score);
+
+#ifdef MAEMO5
+		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 2, 2, ALLEGRO_ALIGN_LEFT, score);
 	}
+	DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 160 - 4, 2, ALLEGRO_ALIGN_RIGHT, "x");
+#else
+		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 160 - 1, 2, ALLEGRO_ALIGN_RIGHT, score);
+	}
+#endif
 
 	if (data->throwing) {
 		al_draw_bitmap(data->corn, data->throwx, data->throwy, 0);
@@ -225,34 +241,13 @@ void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
 		}
 
 	} else {
-#ifndef ALLEGRO_ANDROID
+#if !defined(ALLEGRO_ANDROID) && !defined(MAEMO5)
 		char* tocorn = "Press SPACE to corn";
 #else
 		char* tocorn = "Touch to corn";
 #endif
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
-
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
-
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
-
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 - 1, 90 / 2.0 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0 + 1, 90 / 2.0 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
-
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 - 12 + 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 + 6 + 1, ALLEGRO_ALIGN_CENTER, tocorn);
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 - 12 - 1, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 + 6 - 1, ALLEGRO_ALIGN_CENTER, tocorn);
-
-		al_draw_text(data->font, al_map_rgb(255, 255, 255), 160 / 2.0, 90 / 2.0 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
-		al_draw_text(data->font, al_map_rgb(255, 255, 255), 160 / 2.0, 90 / 2.0 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
+		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
+		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
 	}
 }
 
@@ -305,10 +300,20 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 			data->throwing = true;
 			al_play_sample_instance(data->thr);
 			data->throwx = data->guy->x * 160 + 10;
-			data->throwy = data->guy->y * 90 + 5;
-			data->target = data->guy->x + 5 * data->power;
+			data->throwy = (int)(data->guy->y * 90) + 5;
+			data->target = (int)(data->guy->x + 5 * data->power);
 		}
 	}
+
+#ifdef MAEMO5
+	if (ev->type == ALLEGRO_EVENT_TOUCH_BEGIN) {
+		int x = (int)(game->viewport.width * Clamp(0, 1, (ev->touch.x - game->_priv.clip_rect.x) / (double)game->_priv.clip_rect.w));
+		int y = (int)(game->viewport.height * Clamp(0, 1, (ev->touch.y - game->_priv.clip_rect.y) / (double)game->_priv.clip_rect.h));
+		if ((x >= 140) && (y <= 12)) {
+			UnloadAllGamestates(game);
+		}
+	}
+#endif
 }
 
 void* Gamestate_Load(struct Game* game, void (*progress)(struct Game*)) {
