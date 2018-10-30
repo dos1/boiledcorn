@@ -4,6 +4,7 @@ project(boiledcorn C)
 
 SET(LIBSUPERDERPY_GAMENAME "boiledcorn" CACHE INTERNAL "")
 SET(LIBSUPERDERPY_GAMENAME_PRETTY "Boiled Corn" CACHE INTERNAL "")
+SET(LIBSUPERDERPY_APPID "net.dosowisko.boiledcorn" CACHE INTERNAL "")
 SET(LIBSUPERDERPY_ORIENTATION "LANDSCAPE" CACHE INTERNAL "")
 SET(LIBSUPERDERPY_VERSION "1.0" CACHE INTERNAL "")
 
@@ -11,6 +12,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}/l
 
 include(libsuperderpy)
 include(SetPaths)
+
+set(EMSCRIPTEN_TOTAL_MEMORY "128")
 
 add_subdirectory(libsuperderpy)
 add_subdirectory(src)
