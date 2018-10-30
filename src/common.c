@@ -33,8 +33,10 @@ bool GlobalEventHandler(struct Game* game, ALLEGRO_EVENT* ev) {
 		game->config.fullscreen = !game->config.fullscreen;
 		if (game->config.fullscreen) {
 			SetConfigOption(game, "SuperDerpy", "fullscreen", "1");
+			al_hide_mouse_cursor(game->display);
 		} else {
 			SetConfigOption(game, "SuperDerpy", "fullscreen", "0");
+			al_show_mouse_cursor(game->display);
 		}
 #ifdef ALLEGRO_ANDROID
 		al_set_display_flag(game->display, ALLEGRO_FRAMELESS, game->config.fullscreen);
