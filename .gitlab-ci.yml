@@ -105,6 +105,7 @@ build:maemo5:
   artifacts: *artifacts
   script:
     - dockerd &
+    - sleep 5 # give it some time to launch
     - cd utils
     - ./package_maemo5.sh
 
