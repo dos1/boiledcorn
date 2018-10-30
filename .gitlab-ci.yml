@@ -99,12 +99,12 @@ build:macos:
     - ./package_osx.sh
 
 build:maemo5:
-  image: docker
+  image: docker:dind
   stage: build
   retry: 1
   artifacts: *artifacts
   script:
-    - dockerd --storage-driver=vfs &
+    - dockerd &
     - sleep 5 # give it some time to launch
     - cd utils
     - ./package_maemo5.sh
