@@ -99,6 +99,7 @@ build:macos:
     - ./package_osx.sh
 
 build:maemo5:
+  image: docker
   stage: build
   retry: 1
   artifacts: *artifacts
