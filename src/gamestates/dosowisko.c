@@ -113,7 +113,7 @@ void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
 
 		double tg = tan(-data->tan / 384.0 * ALLEGRO_PI - ALLEGRO_PI / 2);
 
-		int fade = data->fadeout ? 255 : data->fade;
+		int fade = data->fadeout ? 255 : (int)(data->fade);
 
 		al_set_target_bitmap(data->pixelator);
 		al_clear_to_color(al_map_rgb(35, 31, 32));

@@ -219,7 +219,9 @@ void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
 #ifdef MAEMO5
 		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 2, 2, ALLEGRO_ALIGN_LEFT, score);
 	}
-	DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 160 - 4, 2, ALLEGRO_ALIGN_RIGHT, "x");
+	if (game->config.fullscreen) {
+		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 160 - 4, 2, ALLEGRO_ALIGN_RIGHT, "x");
+	}
 #else
 		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(99, 99, 99), 160 - 1, 2, ALLEGRO_ALIGN_RIGHT, score);
 	}
@@ -257,7 +259,20 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 	if ((ev->type == ALLEGRO_EVENT_KEY_DOWN) && (ev->keyboard.keycode == ALLEGRO_KEY_ESCAPE)) {
 		UnloadCurrentGamestate(game); // mark this gamestate to be stopped and unloaded
 		// When there are no active gamestates, the engine will quit.
+		return;
 	}
+
+#ifdef MAEMO5
+	if (ev->type == ALLEGRO_EVENT_TOUCH_BEGIN && game->config.fullscreen) {
+		int x = (int)(game->viewport.width * Clamp(0, 1, (ev->touch.x - game->_priv.clip_rect.x) / (double)game->_priv.clip_rect.w));
+		int y = (int)(game->viewport.height * Clamp(0, 1, (ev->touch.y - game->_priv.clip_rect.y) / (double)game->_priv.clip_rect.h));
+		if ((x >= 140) && (y <= 12)) {
+			UnloadAllGamestates(game);
+			return;
+		}
+	}
+#endif
+
 	if (((ev->type == ALLEGRO_EVENT_KEY_DOWN) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) ||
 		(ev->type == ALLEGRO_EVENT_TOUCH_BEGIN)) {
 		if (!data->started) {
@@ -304,16 +319,6 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 			data->target = (int)(data->guy->x + 5 * data->power);
 		}
 	}
-
-#ifdef MAEMO5
-	if (ev->type == ALLEGRO_EVENT_TOUCH_BEGIN) {
-		int x = (int)(game->viewport.width * Clamp(0, 1, (ev->touch.x - game->_priv.clip_rect.x) / (double)game->_priv.clip_rect.w));
-		int y = (int)(game->viewport.height * Clamp(0, 1, (ev->touch.y - game->_priv.clip_rect.y) / (double)game->_priv.clip_rect.h));
-		if ((x >= 140) && (y <= 12)) {
-			UnloadAllGamestates(game);
-		}
-	}
-#endif
 }
 
 void* Gamestate_Load(struct Game* game, void (*progress)(struct Game*)) {
