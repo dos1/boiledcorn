@@ -154,7 +154,7 @@ void Gamestate_Tick(struct Game* game, struct GamestateResources* data) {
 		data->seay = 0;
 		al_play_sample_instance(data->boiledcorn[rand() % 3]);
 	}
-	data->seax = (int)fabs(sin(data->frames / 64.0)) * 16;
+	data->seax = (int)(fabs(sin(data->frames / 64.0)) * 16);
 	if (data->seax == 15) {
 		data->maxsea = rand() % 7;
 	}
