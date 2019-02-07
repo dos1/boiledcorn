@@ -264,8 +264,8 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 
 #ifdef MAEMO5
 	if (ev->type == ALLEGRO_EVENT_TOUCH_BEGIN && game->config.fullscreen) {
-		int x = (int)(game->viewport.width * Clamp(0, 1, (ev->touch.x - game->_priv.clip_rect.x) / (double)game->_priv.clip_rect.w));
-		int y = (int)(game->viewport.height * Clamp(0, 1, (ev->touch.y - game->_priv.clip_rect.y) / (double)game->_priv.clip_rect.h));
+		int x = (int)(game->viewport.width * Clamp(0, 1, (ev->touch.x - game->clip_rect.x) / (double)game->clip_rect.w));
+		int y = (int)(game->viewport.height * Clamp(0, 1, (ev->touch.y - game->clip_rect.y) / (double)game->clip_rect.h));
 		if ((x >= 140) && (y <= 12)) {
 			UnloadAllGamestates(game);
 			return;

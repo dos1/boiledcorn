@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 static _Noreturn void derp(int sig) {
-	write(STDERR_FILENO, "Segmentation fault\nI just don't know what went wrong!\n", 54);
+	ssize_t __attribute__((unused)) n = write(STDERR_FILENO, "Segmentation fault\nI just don't know what went wrong!\n", 54);
 	abort();
 }
 
@@ -37,14 +37,18 @@ int main(int argc, char** argv) {
 	al_set_org_name("dosowisko.net");
 	al_set_app_name(LIBSUPERDERPY_GAMENAME_PRETTY);
 
-	struct Game* game = libsuperderpy_init(argc, argv, LIBSUPERDERPY_GAMENAME, (struct Viewport){160, 90});
+	struct Game* game = libsuperderpy_init(argc, argv, LIBSUPERDERPY_GAMENAME,
+		(struct Params){
+			160,
+			90,
+			.handlers = (struct Handlers){
+				.event = GlobalEventHandler,
+				.destroy = DestroyGameData,
+			},
+		});
 	if (!game) { return 1; }
 
-	al_set_window_title(game->display, LIBSUPERDERPY_GAMENAME_PRETTY);
-
-	game->handlers.event = &GlobalEventHandler;
-	game->handlers.destroy = &DestroyGameData;
-
+	LoadGamestate(game, "dosowisko");
 	StartGamestate(game, "dosowisko");
 
 	game->data = CreateGameData(game);
