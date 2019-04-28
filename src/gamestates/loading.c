@@ -48,8 +48,3 @@ void Gamestate_Unload(struct Game* game, struct GamestateResources* data) {
 
 void Gamestate_Start(struct Game* game, struct GamestateResources* data) {}
 void Gamestate_Stop(struct Game* game, struct GamestateResources* data) {}
-
-void Gamestate_Reload(struct Game* game, struct GamestateResources* data) {}
-
-void Gamestate_Pause(struct Game* game, struct GamestateResources* data) {}
-void Gamestate_Resume(struct Game* game, struct GamestateResources* data) {}
