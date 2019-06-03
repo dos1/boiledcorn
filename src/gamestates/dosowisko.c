@@ -165,7 +165,7 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 void* Gamestate_Load(struct Game* game, void (*progress)(struct Game*)) {
 	struct GamestateResources* data = malloc(sizeof(struct GamestateResources));
 	int flags = al_get_new_bitmap_flags();
-	al_set_new_bitmap_flags(flags ^ ALLEGRO_MAG_LINEAR);
+	al_set_new_bitmap_flags(flags & ~ALLEGRO_MAG_LINEAR);
 
 	data->timeline = TM_Init(game, data, "main");
 	data->bitmap = CreateNotPreservedBitmap(320, 180);
@@ -239,7 +239,7 @@ void Gamestate_Unload(struct Game* game, struct GamestateResources* data) {
 
 void Gamestate_Reload(struct Game* game, struct GamestateResources* data) {
 	int flags = al_get_new_bitmap_flags();
-	al_set_new_bitmap_flags(flags ^ ALLEGRO_MAG_LINEAR);
+	al_set_new_bitmap_flags(flags & ~ALLEGRO_MAG_LINEAR);
 	data->bitmap = CreateNotPreservedBitmap(320, 180);
 	data->pixelator = CreateNotPreservedBitmap(320, 180);
 	al_set_new_bitmap_flags(flags);
