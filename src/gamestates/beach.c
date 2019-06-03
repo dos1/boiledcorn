@@ -274,7 +274,7 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 #endif
 
 	if (((ev->type == ALLEGRO_EVENT_KEY_DOWN) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) ||
-		(ev->type == ALLEGRO_EVENT_TOUCH_BEGIN)) {
+		(ev->type == ALLEGRO_EVENT_TOUCH_BEGIN) || (ev->type == ALLEGRO_EVENT_JOYSTICK_BUTTON_DOWN)) {
 		if (!data->started) {
 			al_rewind_audio_stream(data->music);
 			al_set_audio_stream_playing(data->music, true);
@@ -309,7 +309,7 @@ void Gamestate_ProcessEvent(struct Game* game, struct GamestateResources* data, 
 		}
 	}
 
-	if (((ev->type == ALLEGRO_EVENT_KEY_UP) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) || (ev->type == ALLEGRO_EVENT_TOUCH_END)) {
+	if (((ev->type == ALLEGRO_EVENT_KEY_UP) && (ev->keyboard.keycode == ALLEGRO_KEY_SPACE)) || (ev->type == ALLEGRO_EVENT_TOUCH_END) || (ev->type == ALLEGRO_EVENT_JOYSTICK_BUTTON_UP)) {
 		if (data->preparing) {
 			data->preparing = false;
 			data->throwing = true;
