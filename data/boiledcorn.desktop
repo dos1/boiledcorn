@@ -4,6 +4,6 @@ Version=1.0
 Name=Boiled Corn
 Exec=boiledcorn
 Comment=Sell boiled corn on a beach
-Icon=boildcorn
+Icon=boiledcorn
 Terminal=false
 Categories=Game;ArcadeGame;
