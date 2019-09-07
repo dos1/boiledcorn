@@ -46,35 +46,35 @@ static TM_ACTION(FadeIn) {
 	switch (action->state) {
 		case TM_ACTIONSTATE_START:
 			data->fade = 0;
-			return false;
+			return TM_REPEAT;
 		case TM_ACTIONSTATE_RUNNING:
 			data->fade += 2 * action->delta / (1 / 60.0);
 			data->tan += action->delta / (1 / 60.0);
-			return data->fade >= 255;
+			return (data->fade >= 255) ? TM_END : TM_REPEAT;
 		case TM_ACTIONSTATE_DESTROY:
 			data->fade = 255;
-			return false;
+			return TM_END;
 		default:
-			return false;
+			return TM_REPEAT;
 	}
 }
 
 static TM_ACTION(FadeOut) {
 	TM_RunningOnly;
 	data->fadeout = true;
-	return true;
+	return TM_END;
 }
 
 static TM_ACTION(End) {
 	TM_RunningOnly;
 	SwitchCurrentGamestate(game, NEXT_GAMESTATE);
-	return true;
+	return TM_END;
 }
 
 static TM_ACTION(Play) {
 	TM_RunningOnly;
 	al_play_sample_instance(TM_Arg(0));
-	return true;
+	return TM_END;
 }
 
 static TM_ACTION(Type) {
@@ -86,7 +86,7 @@ static TM_ACTION(Type) {
 	} else {
 		al_stop_sample_instance(data->kbd);
 	}
-	return true;
+	return TM_END;
 }
 //==================================Timeline manager actions END
 
