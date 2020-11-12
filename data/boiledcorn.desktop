@@ -7,3 +7,4 @@ Comment=Sell boiled corn on a beach
 Icon=boiledcorn
 Terminal=false
 Categories=Game;ArcadeGame;
+X-Purism-FormFactor=Workstation;Mobile;
