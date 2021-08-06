@@ -243,10 +243,12 @@ void Gamestate_Draw(struct Game* game, struct GamestateResources* data) {
 		}
 
 	} else {
-#if !defined(ALLEGRO_ANDROID) && !defined(MAEMO5)
-		char* tocorn = "Press SPACE to corn";
-#else
+#if defined(ALLEGRO_ANDROID) || defined(MAEMO5)
 		char* tocorn = "Touch to corn";
+#elif defined(__vita__) || defined(__SWITCH__)
+		char* tocorn = "Press X to corn";
+#else
+		char* tocorn = "Press SPACE to corn";
 #endif
 		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 - 12, ALLEGRO_ALIGN_CENTER, "BOILED CORN");
 		DrawTextWithOutline(data->font, al_map_rgb(255, 255, 255), al_map_rgb(0, 0, 0), 160 / 2.0, 90 / 2.0 + 6, ALLEGRO_ALIGN_CENTER, tocorn);
