@@ -1,25 +1,39 @@
 {
 "app-id": "net.dosowisko.boiledcorn",
 "runtime": "org.freedesktop.Platform",
-"runtime-version": "19.08",
+"runtime-version": "22.08",
 "sdk": "org.freedesktop.Sdk",
 "command": "boiledcorn",
 "rename-icon": "boiledcorn",
 "rename-desktop-file": "boiledcorn.desktop",
 "finish-args": [
-   "--socket=x11",
    "--socket=wayland",
+   "--socket=fallback-x11",
    "--socket=pulseaudio",
    "--device=dri",
-   "--share=ipc"
+   "--share=ipc",
+   "--env=SDL_MOUSE_AUTO_CAPTURE=0"
 ],
 "cleanup": ["/include", "/lib/pkgconfig", "/lib/*.a", "/lib/*.la", "/share/aclocal", "/share/doc", "/bin/test_physfs"],
 "modules": [
   {
+    "name": "allegro5",
+    "buildsystem": "cmake-ninja",
+    "build-options": {
+       "config-opts": ["-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DALLEGRO_SDL=ON", "-DGL_BUILD_TYPE=gles2+", "-DWANT_DEMO=OFF", "-DWANT_EXAMPLES=OFF", "-DWANT_TESTS=OFF"]
+    },
+    "sources": [
+      {
+        "type": "dir",
+        "path": "../libsuperderpy/src/3rdparty/allegro5"
+      }
+    ]
+  },
+  {
     "name": "boiledcorn",
     "buildsystem": "cmake-ninja",
     "build-options": {
-       "config-opts": ["-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DLIBSUPERDERPY_EMBEDDED_ALLEGRO=ON", "-DGL_BUILD_TYPE=gles2+", "-DWANT_DEMO=OFF", "-DWANT_EXAMPLES=OFF", "-DALLEGRO_SDL=ON"]
+       "config-opts": ["-DCMAKE_BUILD_TYPE=RelWithDebInfo"]
     },
     "sources": [
       {
